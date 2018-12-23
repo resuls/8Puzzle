@@ -50,11 +50,14 @@ $(function()
         changePage(href);
     });
     
+    
+    //  select on game
+    $( "#move" ).selectmenu();
     // game functions
     var tiles = [];
     var img = "url(img/" + (2) + ".jpg) no-repeat";
     var num = 0;
-    var emptyTile;
+    var emptyTile = 0;
     for (var row = 0; row < 3; row++)
     {
         for (var column = 0;column < 3; column++)
@@ -76,12 +79,11 @@ $(function()
                 col: column
             });
         }
-        emptyTile = tiles[0];
     }
    
     var createBoard = function()
     {
-        var ul = $("ul").empty();
+        var ul = $("#game ul").empty();
         
         $(tiles).each(function (index) 
         {
@@ -113,8 +115,10 @@ $(function()
         immovables = [];
         for (var i = 0; i < tiles.length; i++) 
         {
-            if (Math.abs(tiles[i].row - emptyTile.row) + Math.abs(tiles[i].col - emptyTile.col) !== 1 && tiles[i] !== emptyTile)
-                immovables.push(tiles[i]);
+            if (Math.abs(tiles[i].row - tiles[emptyTile].row) 
+                    + Math.abs(tiles[i].col - tiles[emptyTile].col) !== 1 
+                    && tiles[i].data !== tiles[emptyTile].data)
+                immovables.push(tiles[i]);  
         }
     };
 
@@ -132,7 +136,7 @@ $(function()
         });
     };
 
-    $("ul").on("mouseenter", function () 
+    $("#game ul").on("mouseenter", function () 
     {
         getImmovables();
         changeOpacity(0.5);
@@ -149,55 +153,10 @@ $(function()
     
     var shiftTiles = function(pressed)
     {
-//        var newIndex = -1;
-//        if (pressed - 1 >= 0 && tiles[pressed - 1].data === 0) 
-//        { 
-//            // check left
-//            newIndex = pressed - 1;
-//        }  
-//        else if (pressed + 1 < 3 && tiles[pressed + 1].data === 0) 
-//        { 
-//            // check right
-//            newIndex = pressed + 1;
-//        } 
-//        else if (pressed - 3 >= 0 && tiles[pressed - 3].data === 0) 
-//        { 
-//            //check up
-//            newIndex = pressed - 3;
-//        }
-//        else if (pressed + 3 < tiles.length && tiles[pressed + 3].data === 0) 
-//        { 
-//            // check down
-//            newIndex = pressed + 3;
-//        }
         var a = isMovable(pressed);
 
         if (a) 
         {
-            var li = $("li").eq(pressed);
-            var temp = emptyTile.data;
-            
-            emptyTile.data = tiles[pressed].data;
-            tiles[pressed].data = temp;
-                
-            li.animate(
-                {
-                    "top": emptyTile.top,
-                    "left": emptyTile.left
-                }, 1000);
-                
-//            console.log(tiles[pressed]);
-//            console.log(" --> ");
-//            console.log(emptyTile.data);
-//            console.log(tiles);
-            
-            getImmovables();
-            console.log(emptyTile.data);
-            var correct = pressed + 1 === emptyTile.data;
-//            var cssClass = (this.data === 0) ? "empty" : (correct ? "correct" : "incorrect");
-
-//            li.removeClass("empty correct incorrect").addClass(cssClass);
-
             
         }
     };
