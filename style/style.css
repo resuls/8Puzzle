@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+
+/*CSS RESET*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video 
+{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+}
+
+body
+{
+    font-family: 'Roboto', sans-serif;
+}
+
+.main
+{
+    margin: 100px auto;
+    width: 500px;
+    text-align: center;
+}
+
+#slider
+{
+    margin: 80px auto;
+    width: 500px;
+    height: 240px;
+    padding: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    transition-duration: 0.4s;
+    display: table;
+    user-select: none;    
+}
+
+#slider > div
+{
+    display: table-cell; vertical-align: middle; 
+}
+
+h1 {margin-bottom: 80px;}
+h4, h5 {padding: 10px; font-weight: normal;}
+
+.button
+{
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block !important;
+    font-size: 16px;
+    border-radius: 12px;
+    margin: 10px;
+    transition-duration: 0.4s;
+}
+
+.button:hover 
+{
+  background-color: #fff;
+  color: #f44336;
+  border: 1px solid #f44336;
+  cursor: pointer;
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+a {text-decoration: none;}
+
+/*pick image*/
+#pics
+{
+    width: 500px;
+    height: 250px;
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+#pics > img
+{
+    width: 150px;
+    height: 150px;
+    opacity: 1;
+    transition: .5s ease;
+    padding: 10px;
+    border-radius: 30px;
+}
+
+#pics img:hover
+{
+    opacity: 0.3;
+}
+
+#buttonHidden {display: none;}
+
+/*Game zone*/
+#game
+{
+    background-color: gray;
+    height: 500px;
+    width: 500px;
+    border: 2px solid #444444;
+    padding: 5px;
+    margin: 14px auto;
+}
+
+#game ul 
+{
+    margin: 0 auto;
+    padding: 5px;
+    list-style: none;
+    font-size: 0;
+    position: relative;
+    user-select: none;
+    width: 490px;
+    height: 490px;
+    line-height: 500px;
+
+}
+
+#game li 
+{
+    position: absolute;
+    display: inline-block;
+    width: 150px; 
+    height: 150px; 
+    border: 2px solid #444444;
+
+    line-height: 150px;
+    font-size: 40px;
+    text-align: center;
+    border-radius: 20px;
+}
+
+#game li.incorrect 
+{
+    border-color: darkred;
+}
+
+#game li.correct 
+{
+    border-color: green;
+}
+
+.empty
+{
+    background-color: #333333;
+    background-image: none;
+}
