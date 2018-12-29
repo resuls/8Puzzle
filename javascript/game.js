@@ -17,6 +17,15 @@ var openList = new CustomHeap(),
   hash = {},
   goalMap = {},
   size;
+  
+function resetAll()
+{
+    openList = new CustomHeap();
+    steps = 0;
+    checked = 0;
+    hash = {};
+    goalMap = {};
+}
 
 function hashState(state) 
 {
@@ -359,6 +368,7 @@ function CustomHeap()
 var solvePuzzle = function(current)
 {
     moves = [];
+    resetAll();
     initialPositions = current;
     time();
     return moves;
