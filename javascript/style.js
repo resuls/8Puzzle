@@ -24,9 +24,10 @@ $(function()
     $(".button").click(function()
     {
         var href = $(this).find("a").attr("href");
-
         changePage(href);
     });
+    
+    
     
     //pick image
     var imageIndex = -1;
@@ -51,113 +52,260 @@ $(function()
     });
     
     
-    //  select on game
-    $( "#move" ).selectmenu();
+    
+    
     // game functions
+    //  
+    //  initialize the game
     var tiles = [];
     var img = "url(img/" + (2) + ".jpg) no-repeat";
     var num = 0;
-    var emptyTile = 0;
-    for (var row = 0; row < 3; row++)
+    const emptyTile = 0;
+    var immovables = [];
+    var movables = [];
+    var solved = false;
+    var shuffleAmount = 0;
+    var moves = [];
+    
+    for (var row = 0; row < 3; row++) 
     {
-        for (var column = 0;column < 3; column++)
+        for (var column = 0; column < 3; column++) 
         {
-            (column > 0) ? leftMargin = (column+1)*10 : leftMargin = 10;
-            (row > 0) ? topMargin = (row+1)*10 : topMargin = 10;
-            
+            //if (row === 0 && column === 0) continue;
+            leftMargin = (column > 0) ? (column + 1) * 10 : 10;
+            topMargin = (row > 0) ? (row + 1) * 10 : 10;
+
             tiles.push(
-            { 
-                left: column * 150 + leftMargin, 
-                top: row * 150 + topMargin,
-                btop: -row * 150, 
-                bleft: -column * 150, 
-                data: num,
-                current: num++,
-                backgroundImage: img,
-                opacity: 1,
-                row: row,
-                col: column
-            });
+                {
+                    btop: -row * 150,
+                    bleft: -column * 150,
+                    data: num,
+                    backgroundImage: img,
+                    move: 
+                    {
+                        left: column * 150 + leftMargin,
+                        top: row * 150 + topMargin,
+                        row: row,
+                        col: column,
+                        current: num++
+                    }
+                });
         }
     }
-   
-    var createBoard = function()
-    {
-        var ul = $("#game ul").empty();
-        
-        $(tiles).each(function (index) 
-        {
-            var correct = index + 1 === this.data;
-            var cssClass = (this.data === 0) ? "empty" : (correct ? "correct" : "incorrect");
 
-            var li = $("<li id='" + tiles[index].data + "'>");
-            
-            if (cssClass !== "empty")
-            {
-                li.css(
+    var createBoard = function () 
+    {
+        var ul = $("ul").empty();
+        
+        for (var i = 1; i < tiles.length; i++)
+        {
+            var li = $("<li id='" + tiles[i].data + "'>");
+            li.css(
                 {
                     "background": img,
-                    "background-position": (tiles[index].bleft + "px " + tiles[index].btop + "px")
-                });
-            }
+                    "background-position": (tiles[i].bleft + "px " + tiles[i].btop + "px"),
+                    "top": tiles[i].move.top + "px ",
+                    "left": + tiles[i].move.left + "px"
+                }).append(i);
             
-            li.css({"top": tiles[index].top + "px ",
-                    "left": + tiles[index].left + "px"});
             
-            li.addClass(cssClass);
+
+            li.addClass("correct");
             ul.append(li);
-        });
+        }
     }();
-    
-    var immovables = [];
+
     var getImmovables = function () 
     {
         immovables = [];
-        for (var i = 0; i < tiles.length; i++) 
+        movables = [];
+        var correctTiles = 0;
+        for (var i = 0; i < tiles.length; i++)
         {
-            if (Math.abs(tiles[i].row - tiles[emptyTile].row) 
-                    + Math.abs(tiles[i].col - tiles[emptyTile].col) !== 1 
-                    && tiles[i].data !== tiles[emptyTile].data)
-                immovables.push(tiles[i]);  
+            if (Math.abs(tiles[i].move.row - tiles[emptyTile].move.row) + Math.abs(tiles[i].move.col - tiles[emptyTile].move.col) !== 1)
+                immovables.push(tiles[i].data);
+            else
+                movables.push(tiles[i].move.current);
+            
+            if (tiles[i].data === tiles[i].move.current)
+                correctTiles++;
         }
+        
+        if (correctTiles === 9)
+            solved = true;
+        else
+            solved = false;
     };
 
-    var isMovable = function(index) 
+    var isMovable = function (index) 
     {
-        return !immovables.includes(tiles[index]);
+        return movables.includes(tiles[index].move.current);
     };
 
     var changeOpacity = function (opacity) 
     {
-        immovables.forEach(function (item, i) 
+        immovables.forEach(function (item) 
         {
-            $("#" + immovables[i].data).css("opacity", opacity);
+            $("#" + tiles[item].data).css("opacity", opacity);
 
         });
     };
 
+    getImmovables();
+            
     $("#game ul").on("mouseenter", function () 
     {
-        getImmovables();
-        changeOpacity(0.5);
+        if (!solved && !$(this).find("li").is(":animated"))
+            changeOpacity(0.5);
     }).on("mouseleave", function () 
-    {   
+    {
         changeOpacity(1);
     });
-    
-    $("#game ul").on('click', 'li', function()
+
+    $("#game ul").on('click', 'li', function ()
     {
-        index = $(this).index();
+        index = $(this).index() + 1;
         shiftTiles(index);
     });
-    
-    var shiftTiles = function(pressed)
-    {
-        var a = isMovable(pressed);
 
-        if (a) 
+    var shiftTiles = function (pressed) 
+    {
+        if (isMovable(pressed)) 
         {
+            $("#" + pressed).finish().animate(
+            {
+                "top": tiles[emptyTile].move.top,
+                "left": tiles[emptyTile].move.left
+            }, 1000);
             
+            var temp = tiles[pressed].move;
+            tiles[pressed].move = tiles[emptyTile].move;
+            tiles[emptyTile].move = temp;
+
+            setClass(pressed);
+            changeOpacity(1);
+            getImmovables();
+            
+            changeOpacity(0.5);
         }
     };
+    
+    var setClass = function(index)
+    {
+        var li = $("#" + tiles[index].data).removeClass();
+        if (tiles[index].data === tiles[index].move.current)
+            li.addClass("correct");
+        else
+            li.addClass("incorrect");
+    };
+
+    var shuffle = function()
+    {
+        var num = -1;
+        var c = shuffleAmount;
+        changeOpacity(1);
+
+        var move = function(delay)
+        {
+            if (c-- > 0)
+            {
+                var rand;
+
+                do
+                {
+                    rand = Math.floor(Math.random() * 9);
+                } while (num === rand || !isMovable(rand));
+
+                num = rand;
+
+                if (isMovable(num)) 
+                {
+                    $("#" + num).animate(
+                    {
+                        "top": tiles[emptyTile].move.top,
+                        "left": tiles[emptyTile].move.left
+                    }, delay, function()
+                    {
+                        var temp = tiles[num].move;
+                        tiles[num].move = tiles[emptyTile].move;
+                        tiles[emptyTile].move = temp;
+
+                        getImmovables();
+                        setClass(num);
+                        moves.push(num);
+                        move(delay);
+                    });
+                }
+                else
+                {
+                    changeOpacity(0.5);
+                }
+            }
+        };
+        move(1000 - c * 20);
+    };
+    
+    var solve = function()
+    {
+        var current = [];
+
+        for (var i = 0; i < tiles.length; i++)
+            current[tiles[i].move.current] = i;
+        
+        var moves = solvePuzzle(current);
+        
+        console.log(moves); 
+        var move = function(delay)
+        {
+            if (moves.length > 0)
+            {
+                var num = moves.pop();
+
+                
+                $("#" + num).animate(
+                {
+                    "top": tiles[emptyTile].move.top,
+                    "left": tiles[emptyTile].move.left
+                }, delay, function()
+                {
+                    var temp = tiles[num].move;
+                    tiles[num].move = tiles[emptyTile].move;
+                    tiles[emptyTile].move = temp;
+
+                    getImmovables();
+                    
+                    setClass(num);
+                    move(delay);
+                });
+            }
+        };
+        if (!solved)
+            move(300);
+    };
+    
+    $("h1").click(function()
+    {
+        solve();
+    });
+    
+    
+    
+    //  select shuffle
+    $("#shuffle").selectmenu(
+    {
+        change: function()
+        {
+            shuffleAmount = Number.parseInt(this.value);
+            $("#play").removeClass("hideButton");
+        }
+    });
+    
+     $("#play").click(function()
+    {
+        if (solved)
+        {
+            shuffle();
+            solved = false;
+        }
+    });
 });
