@@ -1,6 +1,8 @@
 //  algorithm implementation on javascript is taken from this source:
 //  https://github.com/hisabimbola/n-puzzle/blob/master/a-star.js
 //  and was modified to fit the data structure of my game
+//  About the A* algorithm:
+//  https://blog.goodaudience.com/solving-8-puzzle-using-a-algorithm-7b509c331288
 
 'use strict';
 
