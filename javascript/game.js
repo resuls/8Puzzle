@@ -93,7 +93,8 @@ function generatePuzzle(state)
     
     _state = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-    console.log('Puzzle to solve: [' + initialPositions.slice() + ']');
+    //  show initial
+    //  console.log('Puzzle to solve: [' + initialPositions.slice() + ']');
 
     return _state;
 }
@@ -201,7 +202,9 @@ function calcHeuristicCost(state)
 function collateSteps(state)
 {
     var a = state.splice(0, state.length);
-    console.log(a, a[state.pos]);
+    
+    //  show each step for debugging
+    //  console.log(a, a[state.pos]);
 
     steps++;
     if (!state.prev) 
@@ -264,8 +267,10 @@ function time()
     startTime = new Date();
     aStarSearch(puzzle);
     endTime = new Date();
-    //console.log(checked);
-    console.log('Operation took ' + (endTime.getTime() - startTime.getTime()) + ' msec');
+    
+    //  timer
+    //  console.log(checked);
+    //  console.log('Operation took ' + (endTime.getTime() - startTime.getTime()) + ' msec');
 }
 
 function CustomHeap() 

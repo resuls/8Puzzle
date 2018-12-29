@@ -13,52 +13,52 @@ $(function()
            .hide();
     }, 3000);
    
-    changePage = function (href)
+    //  div change for pages    
+    $("body > div:gt(0)").hide();
+    
+    var changePage = function()
     {
-        $("body").fadeOut(1000, function()
+        $("body > div:first")
+               .fadeOut(500, function()
         {
-            window.location = href;
+           $(this).next()
+                .fadeIn(500)
+                .end()
+                .appendTo("body")
+                .hide();
         });
-    }
+    };
     
     $(".button").click(function()
     {
-        var href = $(this).find("a").attr("href");
-        changePage(href);
+        changePage();
     });
-    
-    
     
     //pick image
     var imageIndex = -1;
     $("#pics img").click(function()
     {
-        if (imageIndex === -1)
-        {
-            $("#buttonHidden").addClass("button");
-        }
+        $("#buttonHidden").addClass("button");
         
         $(this).parent().find("img").css("box-shadow", "none");
         $(this).css({"box-shadow": "0 0 20px rgba(0, 0, 0, 0.5)"}, 300);
        
-        imageIndex = $(this).index();
+        imageIndex = $(this).index() + 1;
     });
     
+    //  set Image before changing page
+    var img;
     $("#buttonHidden").click(function()
     {
-        var href = $(this).find("a").attr("href");
-
-        changePage(href);
+        img = "url(img/" + imageIndex + ".jpg) no-repeat";
+        createBoard();
+        changePage();
     });
-    
-    
-    
     
     // game functions
     //  
     //  initialize the game
     var tiles = [];
-    var img = "url(img/" + (2) + ".jpg) no-repeat";
     var num = 0;
     const emptyTile = 0;
     var immovables = [];
@@ -67,20 +67,17 @@ $(function()
     var shuffleAmount = 0;
     var moves = [];
     
+    var topMargin = 5;
     for (var row = 0; row < 3; row++) 
     {
+        var leftMargin = 5;
         for (var column = 0; column < 3; column++) 
         {
-            //if (row === 0 && column === 0) continue;
-            leftMargin = (column > 0) ? (column + 1) * 10 : 10;
-            topMargin = (row > 0) ? (row + 1) * 10 : 10;
-
             tiles.push(
                 {
                     btop: -row * 150,
                     bleft: -column * 150,
                     data: num,
-                    backgroundImage: img,
                     move: 
                     {
                         left: column * 150 + leftMargin,
@@ -90,7 +87,9 @@ $(function()
                         current: num++
                     }
                 });
+            leftMargin += 5;
         }
+        topMargin += 5;
     }
 
     var createBoard = function () 
@@ -113,7 +112,7 @@ $(function()
             li.addClass("correct");
             ul.append(li);
         }
-    }();
+    };
 
     var getImmovables = function () 
     {
@@ -167,27 +166,57 @@ $(function()
         index = $(this).index() + 1;
         shiftTiles(index);
     });
+    
+    var resetGame = function()
+    {
+        solved = true;
+        shuffleAmount = 0;
+        $("#select").show();
+        $(".backdrop").hide();
+        $("#popup").removeAttr("style");
+        $("#game").css("opacity", 1);
+        getImmovables();
+        changeOpacity(1);
+    };
 
     var shiftTiles = function (pressed) 
     {
-        if (isMovable(pressed)) 
+        if (!solved)
         {
-            $("#" + pressed).finish().animate(
+            if (isMovable(pressed)) 
             {
-                "top": tiles[emptyTile].move.top,
-                "left": tiles[emptyTile].move.left
-            }, 1000);
-            
-            var temp = tiles[pressed].move;
-            tiles[pressed].move = tiles[emptyTile].move;
-            tiles[emptyTile].move = temp;
+                $("#" + pressed).finish().animate(
+                {
+                    "top": tiles[emptyTile].move.top,
+                    "left": tiles[emptyTile].move.left
+                }, 500, function()
+                {
+                    if (solved)
+                    {
+                        $("#solveNow").hide();
+                        $("#select").hide();
+                        $(".backdrop").fadeTo(200, 1);
+                        $("#popup").animate(
+                        {
+                            top: "500px",
+                            "font-size": "100px"
+                        }, 1000);
+                        $("#game").css("opacity", 0.5);
+                    }
+                });
 
-            setClass(pressed);
-            changeOpacity(1);
-            getImmovables();
-            
-            changeOpacity(0.5);
+                var temp = tiles[pressed].move;
+                tiles[pressed].move = tiles[emptyTile].move;
+                tiles[emptyTile].move = temp;
+
+                setClass(pressed);
+                changeOpacity(1);
+                getImmovables();
+
+                changeOpacity(0.5);
+            }
         }
+        console.log(shuffleAmount);
     };
     
     var setClass = function(index)
@@ -234,6 +263,9 @@ $(function()
                         setClass(num);
                         moves.push(num);
                         move(delay);
+                        
+                        if (c <= 0)
+                            $("#solveNow").fadeIn(1000);
                     });
                 }
                 else
@@ -242,7 +274,7 @@ $(function()
                 }
             }
         };
-        move(1000 - c * 20);
+        move(800 - c * 20);
     };
     
     var solve = function()
@@ -254,7 +286,7 @@ $(function()
         
         var moves = solvePuzzle(current);
         
-        console.log(moves); 
+        //  console.log(moves); 
         var move = function(delay)
         {
             if (moves.length > 0)
@@ -278,17 +310,20 @@ $(function()
                     move(delay);
                 });
             }
+            else
+            {
+                $("#select").hide();
+                $("#solveNow").hide();
+                $(".backdrop").fadeTo(200, 1);
+                $("#popup").hide();
+                $("#game").css("opacity", 0.5);
+                resetGame();
+            }
         };
         if (!solved)
             move(300);
+        
     };
-    
-    $("h1").click(function()
-    {
-        solve();
-    });
-    
-    
     
     //  select shuffle
     $("#shuffle").selectmenu(
@@ -300,10 +335,29 @@ $(function()
         }
     });
     
-     $("#play").click(function()
+    $("body").keydown(function(e)
+    {
+        //  console.log(e.which);
+        
+        if (e.which === 116 && shuffleAmount > 0)
+        {
+            resetGame();
+            e.preventDefault();
+        }
+        else if (e.which === 27)
+        {
+            solve();
+            
+            if (!solved)
+                e.preventDefault();
+        }
+    });
+    
+    $("#play").click(function()
     {
         if (solved)
         {
+            $("#select").hide();
             shuffle();
             solved = false;
         }

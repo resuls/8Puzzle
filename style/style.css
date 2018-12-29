@@ -66,6 +66,7 @@ h4, h5 {padding: 10px; font-weight: normal;}
     border-radius: 12px;
     margin: 10px;
     transition-duration: 0.4s;
+    user-select: none;
 }
 
 .button:hover 
@@ -109,13 +110,22 @@ a {text-decoration: none;}
 /*Game zone*/
 #game
 {
-    background-color: gray;
-    height: 500px;
-    width: 500px;
+    background-color: whitesmoke;
+    height: 474px;
+    width: 474px;
     border: 2px solid #444444;
-    padding: 5px;
     margin: 14px auto;
 }
+
+#solveNow
+{
+    display: none;
+    margin-top: 50px;
+    font-size: 50px;
+    color: gray;
+}
+
+#solveNow span { font-size: 15px;}
 
 #select
 {
@@ -138,6 +148,7 @@ a {text-decoration: none;}
     transition-duration: 0.4s;
     width: 50px;
     margin: 20px auto;
+    user-select: none;
 }
 
 #play:hover 
@@ -166,13 +177,10 @@ label
 #game ul 
 {
     margin: 0 auto;
-    padding: 5px;
     font-size: 0;
     position: relative;
     user-select: none;
-    width: 490px;
-    height: 490px;
-    line-height: 500px;
+    line-height: 450px;
     color: white;
 }
 
@@ -187,7 +195,7 @@ label
     line-height: 150px;
     font-size: 40px;
     text-align: center;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 #game li.incorrect 
@@ -198,4 +206,36 @@ label
 #game li.correct 
 {
     border-color: green;
+}
+
+.backdrop
+{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+#popup
+{
+    position: absolute;
+    top: 750px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    font-size: 50px;
+    color: #000;
+}
+
+#f5
+{
+    position: absolute;
+    top: 780px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    color: #000;
+    font-size: 50px;
 }
