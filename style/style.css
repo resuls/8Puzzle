@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
+@import url(https://fonts.googleapis.com/css?family=Thasadith);
+
 
 /*CSS RESET*/
 html, body, div, span, applet, object, iframe,
@@ -23,7 +24,7 @@ time, mark, audio, video
 
 body
 {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Thasadith', serif;
 }
 
 .main
@@ -63,6 +64,7 @@ h4, h5 {padding: 10px; font-weight: normal;}
     text-decoration: none;
     display: inline-block !important;
     font-size: 16px;
+    font-weight: bold;
     border-radius: 12px;
     margin: 10px;
     transition-duration: 0.4s;
@@ -113,8 +115,14 @@ a {text-decoration: none;}
     background-color: whitesmoke;
     height: 474px;
     width: 474px;
-    border: 2px solid #444444;
+
     margin: 14px auto;
+    border: 2px solid rgb(192, 192, 192);
+    border-radius: 20px;
+}
+
+#header{
+    font-size: 50px;
 }
 
 #solveNow
@@ -143,6 +151,7 @@ a {text-decoration: none;}
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    font-weight: bold;
     border-radius: 12px;
     margin: 10px;
     transition-duration: 0.4s;
@@ -183,19 +192,22 @@ label
     line-height: 450px;
     color: white;
 }
-
+select{
+    width : 250px;
+    margin : 0 auto;
+}
 #game li 
 {
     position: absolute;
     display: inline-block;
     width: 150px; 
     height: 150px; 
-    border: 2px solid #444444;
+    border: 2px solid #b9b9b9;
 
     line-height: 150px;
     font-size: 40px;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 20px;
 }
 
 #game li.incorrect 
@@ -222,8 +234,8 @@ label
 
 #popup
 {
-    position: absolute;
-    top: 750px;
+    position: relative;
+    top : 780px;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     font-size: 50px;
@@ -233,7 +245,7 @@ label
 #f5
 {
     position: absolute;
-    top: 780px;
+    top: 600px;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     color: #000;

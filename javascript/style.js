@@ -1,7 +1,7 @@
 $(function() 
 {
    //SLIDER
-   $("#slider > div:gt(0)").hide();
+   $("#slider div:gt(0)").hide();
    
     setInterval(function() 
     { 
@@ -51,8 +51,8 @@ $(function()
     $("#buttonHidden").click(function()
     {
         img = "url(img/" + imageIndex + ".jpg) no-repeat";
-        createBoard();
         changePage();
+        createBoard();
     });
     
     // game functions
@@ -105,10 +105,7 @@ $(function()
                     "background-position": (tiles[i].bleft + "px " + tiles[i].btop + "px"),
                     "top": tiles[i].move.top + "px ",
                     "left": + tiles[i].move.left + "px"
-                }).append(i);
-            
-            
-
+                });
             li.addClass("correct");
             ul.append(li);
         }
@@ -170,7 +167,6 @@ $(function()
     var resetGame = function()
     {
         solved = true;
-        shuffleAmount = 0;
         $("#select").show();
         $(".backdrop").hide();
         $("#popup").removeAttr("style");
@@ -198,8 +194,12 @@ $(function()
                         $(".backdrop").fadeTo(200, 1);
                         $("#popup").animate(
                         {
-                            top: "500px",
-                            "font-size": "100px"
+                            top: "300px",
+                            "font-size": "120px"
+                        }, 1000).animate({ "font-size": 100 }, 300);
+                        $("#f5").show().animate(
+                        {
+                            top: "390px"
                         }, 1000);
                         $("#game").css("opacity", 0.5);
                     }
@@ -216,7 +216,6 @@ $(function()
                 changeOpacity(0.5);
             }
         }
-        console.log(shuffleAmount);
     };
     
     var setClass = function(index)
@@ -277,6 +276,46 @@ $(function()
         move(800 - c * 20);
     };
     
+    
+    
+     //  select shuffle
+     $("#shuffle").selectmenu(
+     {
+         change: function()
+         {
+             shuffleAmount = Number.parseInt(this.value);
+             $("#play").removeClass("hideButton");
+         }
+     });
+    
+    $("body").keydown(function(e)
+    {
+        //  console.log(e.which);
+        
+        if (e.which === 116 && shuffleAmount > 0)
+        {
+            resetGame();
+            e.preventDefault();
+        }
+        else if (e.which === 27)
+        {
+            solve();
+            
+            if (!solved)
+                e.preventDefault();
+        }
+    });
+    
+    $("#play").click(function()
+    {
+        if (solved)
+        {
+            $("#select").hide();
+            shuffle();
+            solved = false;
+        }
+    });
+
     var solve = function()
     {
         var current = [];
@@ -322,44 +361,5 @@ $(function()
         };
         if (!solved)
             move(300);
-        
     };
-    
-    //  select shuffle
-    $("#shuffle").selectmenu(
-    {
-        change: function()
-        {
-            shuffleAmount = Number.parseInt(this.value);
-            $("#play").removeClass("hideButton");
-        }
-    });
-    
-    $("body").keydown(function(e)
-    {
-        //  console.log(e.which);
-        
-        if (e.which === 116 && shuffleAmount > 0)
-        {
-            resetGame();
-            e.preventDefault();
-        }
-        else if (e.which === 27)
-        {
-            solve();
-            
-            if (!solved)
-                e.preventDefault();
-        }
-    });
-    
-    $("#play").click(function()
-    {
-        if (solved)
-        {
-            $("#select").hide();
-            shuffle();
-            solved = false;
-        }
-    });
 });

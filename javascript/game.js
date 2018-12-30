@@ -1,9 +1,3 @@
-//  algorithm implementation on javascript is taken from this source:
-//  https://github.com/hisabimbola/n-puzzle/blob/master/a-star.js
-//  and was modified to fit the data structure of my game
-//  About the A* algorithm:
-//  https://blog.goodaudience.com/solving-8-puzzle-using-a-algorithm-7b509c331288
-
 'use strict';
 
 var initialPositions = [];
@@ -14,7 +8,7 @@ var openList = new CustomHeap(),
   endTime,
   steps = 0,
   checked = 0,
-  hash = {},
+  closedList = {}, 
   goalMap = {},
   size;
   
@@ -23,8 +17,9 @@ function resetAll()
     openList = new CustomHeap();
     steps = 0;
     checked = 0;
-    hash = {};
+    closedList = {}; 
     goalMap = {};
+    moves = [];
 }
 
 function hashState(state) 
@@ -50,55 +45,6 @@ function shuffle(array)
     return array;
 }
 
-function checkSolvable(state) 
-{
-    var pos = state.indexOf(0);
-    var _state = state.slice();
-    _state.splice(pos, 1);
-    var count = 0;
-    
-    for (var i = 0; i < _state.length; i++) 
-    {
-        if (_state[i] === 0) 
-        {
-          continue;
-        }
-        
-        for (var j = i + 1; j < _state.length; j++) 
-        {
-            if (_state[j] === 0) 
-            {
-              continue;
-            }
-            if (_state[i] > _state[j]) 
-            {
-              count++;
-            }
-        }
-    }
-    return count % 2 === 0;
-}
-
-function generatePuzzle(state) 
-{
-    var firstElement, secondElement;
-    var _state = state.slice();
-    
-    if (!checkSolvable(_state)) 
-    {
-        firstElement = _state[0] !== 0 ? 0 : 3;
-        secondElement = _state[1] !== 0 ? 1 : 3;
-        swap(_state, firstElement, secondElement);
-    }
-    
-    _state = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-
-    //  show initial
-    //  console.log('Puzzle to solve: [' + initialPositions.slice() + ']');
-
-    return _state;
-}
-
 function move(state, pos, steps)
 {
     var newState = [];
@@ -109,9 +55,9 @@ function move(state, pos, steps)
 
 function swap(state, from, to) 
 {
-    var _ = state[from];
+    var temp = state[from];
     state[from] = state[to];
-    state[to] = _;
+    state[to] = temp;
 }
 
 function compare(arr1, arr2) 
@@ -179,7 +125,7 @@ function getSuccessors(state)
     return successors;
 }
 
-function calcHeuristicCost(state) 
+function calcHScore(state) 
 {
     var totalDist = 0;
     
@@ -199,13 +145,9 @@ function calcHeuristicCost(state)
     return totalDist;
 }
 
-function collateSteps(state)
+function getSteps(state)
 {
     var a = state.splice(0, state.length);
-    
-    //  show each step for debugging
-    //  console.log(a, a[state.pos]);
-
     steps++;
     if (!state.prev) 
     {
@@ -213,7 +155,7 @@ function collateSteps(state)
     }
    
     moves.unshift(a[state.pos]);
-    collateSteps(state.prev);
+    getSteps(state.prev);
 }
 
 function aStarSearch(state) 
@@ -223,7 +165,7 @@ function aStarSearch(state)
     state.prev = null;
     openList.push(state);
     _state = hashState(state);
-    hash[_state] = true;
+    closedList[_state] = true;
 
     while (!openList.empty()) 
     {
@@ -231,7 +173,7 @@ function aStarSearch(state)
         
         if (compare(initialPositions, currentState)) 
         {
-            collateSteps(currentState);
+            getSteps(currentState);
             break;
         }
         
@@ -242,12 +184,12 @@ function aStarSearch(state)
             checked++;
             var s = successors[i];
             _state = hashState(s);
-            
-            if (hash[_state]) 
+            //  console.log(closedList[_state]);
+            if (closedList[_state]) 
                 continue;
             
-            hash[_state] = true;
-            s.heuristicCost = calcHeuristicCost(s);
+                closedList[_state] = true;
+            s.heuristicCost = calcHScore(s);
             s.levels = s.prev.levels + 1;
             s.totalCost = s.heuristicCost + s.levels;
             openList.push(s);
@@ -256,22 +198,7 @@ function aStarSearch(state)
 }
 
 
-function time()
-{
-    var puzzle = generatePuzzle(initialPositions);
-    
-    for (var i = 0; i < initialPositions.length; i++) 
-        goalMap[initialPositions[i]] = i;
 
-    size = Math.sqrt(initialPositions.length);
-    startTime = new Date();
-    aStarSearch(puzzle);
-    endTime = new Date();
-    
-    //  timer
-    //  console.log(checked);
-    //  console.log('Operation took ' + (endTime.getTime() - startTime.getTime()) + ' msec');
-}
 
 function CustomHeap() 
 {
@@ -315,7 +242,7 @@ function CustomHeap()
         var currentState = values[_size];
         values[_size] = undefined;
         size--;
-        siftDown(0);
+        shiftDown(0);
         
         return currentState;
     };
@@ -338,7 +265,7 @@ function CustomHeap()
         values[to] = temp;
     }
 
-    function siftDown(i) 
+    function shiftDown(i) 
     {
         var leftChild = left(i);
         var len = size;
@@ -365,16 +292,21 @@ function CustomHeap()
         if (smallest.totalCost < values[i].totalCost) 
         {
             swap(i, smallestIndex);
-            siftDown(smallestIndex);
+            shiftDown(smallestIndex);
         }
     }
 }
   
-var solvePuzzle = function(current)
+
+var solvePuzzle = function(currentState)
 {
-    moves = [];
     resetAll();
-    initialPositions = current;
-    time();
+    initialPositions = currentState;
+    var goal =  [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    for (var i = 0; i < initialPositions.length; i++) 
+        goalMap[initialPositions[i]] = i;
+
+    size = Math.sqrt(initialPositions.length);
+    aStarSearch(goal);
     return moves;
 };

@@ -13,7 +13,7 @@
     </head>
     <body>
         <div class="main">
-            <h1>8 Puzzle</h1>
+            <h1 id="header">8 Puzzle Game</h1>
             <div id="slider">
                 <div>
                     <h4>CTIS 255 - Web Technologies</h4>
@@ -22,14 +22,15 @@
                 </div>
                 <div>
                     <h4>by</h4>
-                    <h4>Resulkary Saparov</h4>
-                    <h5>21701538</h4>
+                    <h4>Resulkary Saparov 21701538</h4>
+                    <h5>&</h4>
+                    <h4>Zeyad Abuamer 21701633</h4>
                 </div>
                 <div>
                     <h2>Enjoy!</h2>
                 </div>
             </div>
-            <div class="button"><a href="select.html"></a>START</div>
+            <div class="button">START</div>
         </div>
         <div class="main">
             <h1>Pick an Image</h1>
@@ -38,19 +39,18 @@
                 <img src="img/2.jpg" alt=""/>
                 <img src="img/3.jpg" alt=""/>
             </div>
-            <div id="buttonHidden"><a href="game.html"></a>Continue</div>
+            <div id="buttonHidden">Continue</div>
         </div>
         <div class="main" style="width: 600px;">
-            
-            <h1>GAME ZONE</h1>
+
             <div id="game"><ul></ul></div>
             
             <div id="select">
                 <label>Select Shuffle Amount</label>
                 <select name="shuffle" id="shuffle">
-                  <option selected disabled>Choose shuffle</option>
-                  <option>3 moves</option>
-                  <option>30 moves</option>
+                  <option selected disabled value="none">Choose shuffle</option>
+                  <option value="3">3 moves</option>
+                  <option value="30">30 moves</option>
                 </select>
                 <div class="hideButton" id="play">START</div>
             </div>
