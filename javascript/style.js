@@ -305,6 +305,11 @@ $(function()
                 e.preventDefault();
         }
     });
+
+    $("#solveNow span").click(function (e) 
+    {
+        solve();
+    });
     
     $("#play").click(function()
     {
